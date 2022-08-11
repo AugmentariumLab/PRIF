@@ -1,0 +1,324 @@
+<!doctype html><meta charset=utf-8>
+
+<head>
+
+<meta property="twitter:image" content="https://augmentedperception.github.io/total_relighting/thumbs/tr_paper-1.jpg" />
+<meta property="og:image" content="https://augmentedperception.github.io/total_relighting/thumbs/tr_paper-1.jpg"/>
+<meta property="og:type" content="website"/> 
+<meta property="og:url" content="https://augmentedperception.github.io/total_relighting/" /> 
+<meta property="og:title" content="Total Relighting: Learning to Relight Portraits for Background Replacement" />
+<meta property="og:description" content="With a single photo, you can now be anywhere, without needing a green screen or dedicated capture setups!" />
+</head>
+
+<title>PRIF: Primary Ray-based Implicit Function</title>
+
+<style>
+    body {
+      font-family: Roboto, "Roboto", sans-serif;
+      background: #F0F0F0;
+      color: #696969;
+      /* text-align: center; */
+      /* padding: 0px 40px 40px 40px; */
+    }
+    h1 { 
+        display: block;
+        font-size: 2em;
+        margin-top: 0.67em;
+        margin-bottom: 0px;
+        margin-left: 0;
+        margin-right: 0;
+        font-weight: normal;
+        color: #000;
+        }
+    h2 { 
+        display: block;
+        font-size: 1.zem;
+        margin-top: 0.67em;
+        margin-bottom: 0.67em;
+        margin-left: 0;
+        margin-right: 0;
+        font-weight: normal;
+        color: #000;
+        }
+    h3 { 
+        display: block;
+        font-size: 1.0em;
+        margin-top: 0.67em;
+        margin-bottom: 0.67em;
+        margin-left: 0;
+        margin-right: 0;
+        font-weight: normal;
+        }
+    h4 { 
+        display: block;
+        font-size: 1.1em;
+        margin-top: 0.0em;
+        margin-bottom: 0.67em;
+        margin-left: 0;
+        margin-right: 0;
+        font-weight: normal;
+        color: #000;
+        }
+    hr {
+        border-top: 1px solid black;
+    }
+    .first-letter {
+        font-weight: 350;
+        display: inline;
+        font-size: 1.75em;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+    .paper-thumbnail {
+      box-shadow: 1px 2px 5px 2px rgba(0, 0, 0, .15);
+      width: 230px;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        text-align: center;
+        margin: 0px -10px 0px -10px;
+    }
+    .grid-container > div {
+        text-align: center;
+    }
+    .logos {
+      margin: 0px 20px 20px 0;
+    }
+    .ib {
+      display: inline-block;
+      margin: 00px 20px 20px 0px;
+    }
+    .logos-container {
+	margin: 20px 0px 50px 0px;
+    width: 100%;
+    float: left;
+	position: relative;
+    min-width: 800px;
+    }
+    .logo {
+    text-align: center;
+	position: relative;
+    }
+    .video {
+	margin: 20px 0px 0px 0px;
+    width: 100%;
+    float: left;
+	position: relative;
+    }
+    .abstract {
+	margin: 50px 0px 0px 0px;
+    width: 100%;
+    float: left;
+	position: relative;
+    }
+    .data {
+	margin: 40px 0px 80px 0px;
+    width: 100%;
+    float: left;
+	position: relative;
+    }
+    .superhero {
+    width: 1024px;
+    position: relative;
+    margin: auto;
+    padding-left: 80px;
+    padding-right: 80px;
+    overflow: auto;
+    /* min-width: 800px; */
+    }
+    .title {
+	margin: 50px 0px 0px 0px;
+    width: 100%;
+    float: left;
+	position: relative;
+    text-align: center;
+    /* line-height: 40pt; */
+    }
+    .title-line {
+        margin: 20px 0px 20px 0px;
+    }
+    .authors {
+	/* margin: 25px 0px 0px 0px; */
+    /* width: 400px;
+    height: 1100px; */
+    padding-left: 15%;
+    padding-right: 15%;
+    position: relative;
+    text-align: center;
+    }
+    .paper {
+    width: 100%;
+    float: left;
+	position: relative;
+    }
+    h1.title-name {
+	font-size: 40px;
+	font-weight: 300;
+    margin-bottom: 0px;
+	display: inline-block;
+    }
+    h1.name {
+	font-size: 40px;
+	font-weight: 300;
+    margin-bottom: 10px;
+	display: inline-block;
+    }
+    .email {
+	display: block;
+	font-size: 19px;
+	font-weight: 300;
+	color: #81899C;
+	margin-top: 0px;
+    display: inline-block;
+    }
+    .section-list {
+    margin: 50px 0px 0px 0px;
+    width: 100%;
+    float: left;
+	position: relative;
+    }
+    .lead {
+	font-size: 20px;
+	font-weight: 300;
+	margin-top: 0px;
+	line-height: 30px;
+    display: inline-block;
+    }
+    .names {
+    font-size: 1.2em;
+	font-weight: 300;
+	margin-top: 0px;
+	line-height: 20pt;
+    display: inline-block;
+    text-align: center;
+    }
+    .video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    }
+    .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    }
+    .footer {
+        width: 100%;
+        height: 65px;
+        float: left;
+        margin-top: 25px;
+    }
+    .footer-left {
+        width: 20%;
+        float: left;
+    }
+    .footer-right {
+        width: 20%;
+        float: right;
+        text-align: right;
+    }
+    a.pagelink:link,
+    a.pagelink:visited,
+    a.pagelink:active { color: #81899C; text-decoration: none; }
+    a.pagelink:hover { color: #006699; text-decoration: underline; }
+</style>
+
+<body>
+<div class="superhero">
+    <div class="title">
+        <h1>PRIF: Primary Ray-based Implicit Function</h1>
+        <div class="title-line">
+            <hr style = "width:63%;">
+        </div>
+    </div>
+   <div class ="authors">
+    <h2 class="names">
+        <a style="text-decoration:none; color:#000;" href="https://brandonyfeng.github.io/">Brandon Y. Feng</a>, 
+        <a style="text-decoration:none; color:#000;" href="https://www.zhangyinda.com/">Yinda Zhang</a>,
+        <a style="text-decoration:none; color:#000;" href="https://scholar.google.com/citations?user=9uxs6G4AAAAJ&hl=en">Danhang Tang</a>,
+        <a style="text-decoration:none; color:#000;" href="https://ruofeidu.com/">Ruofei Du</a>, 
+        <a style="text-decoration:none; color:#000;" href="https://www.cs.umd.edu/~varshney/">Amitabh Varshney</a></h2>
+    </div>
+
+    <div class="logos-container">
+        <div class="logo">
+            <a href="https://www.cs.umd.edu/"><img src="thumbs/umd.png" width="256px" class="logos"></a>
+            <a href="https://research.google/"><img src="thumbs/google.png" width="256px" class="logos"></a>
+        </div>
+
+        <div class="title-line">
+            <hr style = "width:63%;">
+        </div>
+
+        <div class ="logo">
+        <h2 class="names">  <a style="text-decoration:none; color:#000;" href="https://eccv2022.ecva.net/">European Conference on Computer Vision (ECCV) 2022</h2></a>
+        </div>
+        
+    </div>
+    
+    <div class="paper">
+        <div class="grid-container">
+            <div class="item1"><a href="https://research.google/pubs/pub51556/"><img src="thumbs/tn1.png" class="paper-thumbnail"></a></div>
+            <div class="item2"><a href="https://research.google/pubs/pub51556/"><img src="thumbs/tn2.png" class="paper-thumbnail"></a></div>
+            <div class="item3"><a href="https://research.google/pubs/pub51556/"><img src="thumbs/tn3.png" class="paper-thumbnail"></a></div>
+            <div class="item4"><a href="https://research.google/pubs/pub51556/"><img src="thumbs/tn4.png" class="paper-thumbnail"></a></div>
+        </div>
+        <br>
+        <a style="text-decoration:none; color:#000;" href="https://research.google/pubs/pub51556/">Click to view the paper.</a>
+    </div>
+
+    <div class="abstract">
+        <h2>Abstract</h2>
+            <p style="text-align: justify;">
+            <span class="first-letter">W</span>e introduce a new implicit shape representation called Primary Ray-based Implicit Function (PRIF). In contrast to most existing approaches based on the signed distance function (SDF) which handles spatial locations, our representation operates on oriented rays. Specifically, PRIF is formulated to directly produce the surface hit point of a given input ray, without the expensive sphere-tracing operations, hence enabling efficient shape extraction and differentiable rendering. We demonstrate that neural networks trained to encode PRIF achieve successes in various tasks including single shape representation, category-wise shape generation, shape completion from sparse or noisy observations, inverse rendering for camera pose estimation, and neural rendering with color.</p>
+    </div>
+
+	<div class="section-list" >
+		<h2>BibTex</h2>
+		<div class="section bibtex">
+		<pre>@inproceedings{Feng:2022,
+		author = {Feng, Brandon Y. and Zhang, Yinda and Tang, Danhang and Du, Ruofei and Varshney, Amitabh},
+		title = {PRIF: Primary Ray-based Implicit Function},
+		booktitle = {Proceedings of the European Conference on Computer Vision (ECCV)},
+		month = {October},
+		year = {2022}}
+		</pre>
+		</div>
+	</div>
+	
+    <div class="video">
+            <h2 class="section-title">Video</h2>
+            <div class="video-container" style="margin-top: 50px;">
+                    <iframe width="1440" height="651" src="https://www.youtube.com/embed/b6lFdM2k_j8" title="PRIF Primary Ray-based Implicit Function" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div> 
+            <br>
+            Video
+    </div>
+
+
+    <div class="footer">
+        <hr style = "margin-bottom: 15px;">
+        <div class="footer-left">
+            <a href="https://cs.umd.edu" class="pagelink"><b>University of Maryland</b></a>
+        </div>
+        <div class="footer-right">
+            <a href="https://research.google" class="pagelink"><b>Google Research</b></a>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+</body>
+
+
+
